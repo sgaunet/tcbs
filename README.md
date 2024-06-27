@@ -23,3 +23,23 @@ This golang module offers some basic functions to spin up some containers.
 		t.Fatalf("could not ping postgres: %v", err)
 	}
 ```
+
+## redis
+
+```go
+  redisC, err := tcbs.NewRedisContainer("", "")
+	if err != nil {
+		t.Fatalf("could not create redis container: %v", err)
+	}
+	defer redisC.Terminate(context.Background())
+
+	ctx := context.Background()
+	redisClient := redis.NewClient(&redis.Options{
+		Username: redisC.GetRedisUser(),
+		Password: redisC.GetRedisPassword(),
+		Addr:     redisC.GetRedisHost() + ":" + redisC.GetRedisPort(),
+	})
+	defer redisClient.Close()
+
+	_, err = redisClient.Ping(ctx).Result()
+```
