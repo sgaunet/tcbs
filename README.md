@@ -1,7 +1,7 @@
 
-This golang module offers some basic functions to spin up some containers. 
+This golang module offers some basic functions to spin up some containers. It uses testcontainers.
 
-## Postgresql
+## POSTGRESQL
 
 ```go
   // create the container
@@ -24,7 +24,7 @@ This golang module offers some basic functions to spin up some containers.
 	}
 ```
 
-## redis
+## REDIS
 
 ```go
   redisC, err := tcbs.NewRedisContainer("", "")
@@ -42,4 +42,71 @@ This golang module offers some basic functions to spin up some containers.
 	defer redisClient.Close()
 
 	_, err = redisClient.Ping(ctx).Result()
+```
+
+## SFTP
+
+```go
+  container, err := tcbs.NewTestSFTPServer()
+	if err!= nil {
+		log.Fatal(err)
+	}
+	defer container.Terminate()
+	// init ssh client
+	auth := goph.Password(container.GetPassword())
+	host := strings.Split(container.GetEndpoint(), ":")[0]
+	port := strings.Split(container.GetEndpoint(), ":")[1]
+	portUint, err := strconv.ParseUint(port, 10, 32)
+	if err != nil {
+		log.Fatal(err)
+	}
+	client, err := goph.NewConn(&goph.Config{
+		User:     container.GetUsername(),
+		Addr:     host,
+		Port:     uint(portUint),
+		Auth:     auth,
+		Callback: VerifyHost,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	client.Close()
+}
+
+// no fingerprint check
+func VerifyHost(host string, remote net.Addr, key ssh.PublicKey) error {
+	// return goph.AddKnownHost(host, remote, key, "")
+	return nil
+}
+```
+
+## SMTP
+
+```go
+	container, err := tcbs.NewTestSMTPServer()
+	if err != nil {
+		t.Fatalf("could not create smtp container: %v", err)
+	}
+	defer container.Terminate()
+
+	// ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(5*time.Second))
+	// defer cancel()
+	SMTPClient := mail.NewSMTPClient()
+	SMTPClient.Host = container.GetSMTPHost()
+	SMTPClient.Port = container.GetSMTPPortInt()
+	SMTPClient.Username = container.GetSMTPUser()
+	SMTPClient.Password = container.GetSMTPPassword()
+	// SMTPClient.Encryption = mail.EncryptionTLS
+	SMTPClient.Encryption = mail.EncryptionNone
+	SMTPClient.KeepAlive = true
+	SMTPClient.ConnectTimeout = 10 * time.Second
+	SMTPClient.SendTimeout = 10 * time.Second
+	SMTPClient.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	client, err := SMTPClient.Connect()
+	if err != nil {
+		t.Fatalf("Failed to connect to SMTP server: %v", err)
+	}
+	defer client.Close()
+	...
 ```
