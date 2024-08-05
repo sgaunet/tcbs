@@ -1,6 +1,4 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/sgaunet/tcbs)](https://goreportcard.com/report/github.com/sgaunet/tcbs)
-[![GitHub release](https://img.shields.io/github/release/sgaunet/tcbs.svg)](https://github.com/sgaunet/tcbs/releases/latest)
-![GitHub Downloads](https://img.shields.io/github/downloads/sgaunet/tcbs/total)
 [![Maintainability](https://api.codeclimate.com/v1/badges/befd533c3eda78ff851d/maintainability)](https://codeclimate.com/github/sgaunet/tcbs/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/befd533c3eda78ff851d/test_coverage)](https://codeclimate.com/github/sgaunet/tcbs/test_coverage)
 [![GoDoc](https://godoc.org/github.com/sgaunet/tcbs?status.svg)](https://godoc.org/github.com/sgaunet/tcbs)
