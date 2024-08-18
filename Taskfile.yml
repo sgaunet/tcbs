@@ -1,0 +1,25 @@
+# https://taskfile.dev
+version: '3'
+
+tasks:
+  default:
+    desc: "List tasks"
+    cmds:
+      - task -a
+
+  install-prereq:
+    desc: "Install prerequisites"
+    cmds:
+      - go install golang.org/x/pkgsite/cmd/pkgsite@latest
+
+  coverage:
+    desc: "Tests with coverage"
+    cmds:
+      - go test -coverpkg=./... -coverprofile=profile.cov ./...
+      - go tool cover -func profile.cov
+      - rm profile.cov
+
+  doc:
+    desc: "Start pkgsite server"
+    cmds:
+      - pkgsite
