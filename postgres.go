@@ -14,6 +14,9 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
+const PostgresDockerImage = "postgres:16.2"
+const DeadlineTimeout = 20 * time.Second
+
 // TestDB is a struct that holds the postgresql container and the DSN
 type PostgresContainer struct {
 	postgresqlC    testcontainers.Container
@@ -24,7 +27,7 @@ type PostgresContainer struct {
 func NewPostgresContainer(postgresUser, postgresPassword, postgresDBName string) (*PostgresContainer, error) {
 	var err error
 	newpgDB := &PostgresContainer{}
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(10*time.Second))
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(DeadlineTimeout))
 	defer cancel()
 	req := testcontainers.ContainerRequest{
 		Image:        "postgres:16.2",
